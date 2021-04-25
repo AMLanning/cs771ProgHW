@@ -8,6 +8,10 @@
  */
 
 //Remember to put declarations up here
+#include <vector>
+#include <cmath>
+
+int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int valueAttempt = -1);
 
 int main()
 {
@@ -37,7 +41,7 @@ int main()
     return 0;
 }
 
-//FindMostAttackedQueen (queenArray)
+//FindMostAttackedQueen (queenVector)
     //int currentMostQueen = TODO: assign default values
 
     //TODO: flesh out process to return most attacked queen value
@@ -58,9 +62,31 @@ int main()
 
 
 
-//getQueenAttackValue(queenVector, indexInQuestion, valueAttempt = -1) (default valueAttempt is sentinel value that signals to check current index value
-    //int attacksCount = 0;
+int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int valueAttempt)  //default valueAttempt is sentinel value that signals to check current index value
+{
+    int attacksCount = 0;
+    int queenIndex; //The index that is currently being checked
 
-    //for loop: i thru 1-8 (all possible neigbors)
-        //if queenVector.at(i) == TODO: find value
-        //TODO: flesh out for loop that finds queen attack value here
+
+    //This IF allows checking either the queen's current attack value, or probing before a value change
+    if (valueAttempt != -1) { 
+        queenIndex = valueAttempt;
+    } 
+    else {
+        queenIndex = indexInQuestion;
+    }
+
+
+    //Now counting the number of attacks that occur
+    for (int i = 1; i < 9; i++) {
+        if (queenVector.at(i) == queenVector.at(queenIndex)) {
+            attacksCount++; //This check has revealed that queen i and the queen at queenIndex are attacking each other by being in the same row.
+            continue;
+        }else if(abs(i - queenIndex) == abs(queenVector.at(i) - queenVector.at(queenIndex))){
+            attacksCount++; //This check has revealed that the two queens are diagonal to each other, and are thus attacking each other.
+            continue;
+        }
+    }
+
+    return attacksCount;
+}
