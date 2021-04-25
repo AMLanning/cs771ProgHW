@@ -11,6 +11,8 @@
 #include <vector>
 #include <cmath>
 
+int findMostAttackedQueen(std::vector<int>& queenVector);
+int findLeastAttackedValue(std::vector<int>& queenVector);
 int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int valueAttempt = -1);
 
 int main()
@@ -48,7 +50,7 @@ int findMostAttackedQueen(std::vector<int>& queenVector) //Finds the index of th
     int currentMostQueenValue = getQueenAttackValue(queenVector, currentMostQueenIndex);
 
     //Checking each queen's attack value
-    for (int i = 2; i < 9; i++) {
+    for (int i = 2; i < 9; i++) { //Position 1 was checked to during initialization, it is not rechecked
         int tmpValue = getQueenAttackValue(queenVector, i);
 
         if (currentMostQueenValue < tmpValue) { //If any queen is more attacked than the current "favorite", it becomes the new "favorite"
@@ -61,18 +63,21 @@ int findMostAttackedQueen(std::vector<int>& queenVector) //Finds the index of th
 }
 
 
-//FindLeastAttackedValue (Takes: queen vector, indexInQuestion)
-//Can this fail? What should I assign as a default value, how can it fail?
-    //int leastAttackedValue = default currentIndex value
+int findLeastAttackedValue(std::vector<int>& queenVector) {
+    int leastAttackedIndex = 1;
+    int leastAttackedValue = getQueenAttackValue(queenVector, leastAttackedIndex);
 
-    //For loop, 0 - 8 for each possible value
-        //int currentTryValue = getQueenAttackValue
-        //If currentTryValue < leastAttacksValue
-            //Assign currentTryValue to leastAttacksValue
-        //Else -- Do Nothing
+    for (int i = 2; i < 9; i++) { //Position 1 was checked to during initialization, it is not rechecked
+        int tmpValue = getQueenAttackValue(queenVector, i);
 
-    //return leastAttackedValue;
+        if (leastAttackedValue > tmpValue) {
+            leastAttackedIndex = i;
+            leastAttackedValue = tmpValue;
+        }
+    }
 
+    return leastAttackedIndex;
+}
 
 
 int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int valueAttempt)  //default valueAttempt is sentinel value that signals to check current index value
