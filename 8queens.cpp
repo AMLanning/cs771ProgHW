@@ -12,14 +12,13 @@
 #include <cmath>
 
 int findMostAttackedQueen(std::vector<int>& queenVector);
-int findLeastAttackedValue(std::vector<int>& queenVector);
+void assignBestQueenRow(std::vector<int>& queenVector, int indexInQuestion);
 int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int valueAttempt = -1);
 
 int main()
 {
 //Set up the data structures
-    //A vector composed of integer arrays, vectors will need to be resized, but the int arrays will not
-    //TODO: consider this more
+    std::vector<std::vector<int>> allQueenSets; //This vector will start with all of the initial states as their own vector
 
 
 //Loading Initial States from the Input File
@@ -49,6 +48,7 @@ int findMostAttackedQueen(std::vector<int>& queenVector) //Finds the index of th
     int currentMostQueenIndex = 1; //Queen indexes start at 1 to match the assignment sheet
     int currentMostQueenValue = getQueenAttackValue(queenVector, currentMostQueenIndex);
 
+
     //Checking each queen's attack value
     for (int i = 2; i < 9; i++) { //Position 1 was checked to during initialization, it is not rechecked
         int tmpValue = getQueenAttackValue(queenVector, i);
@@ -62,21 +62,25 @@ int findMostAttackedQueen(std::vector<int>& queenVector) //Finds the index of th
     return currentMostQueenIndex;
 }
 
+//I might have made a mistake, I should have written a function to find the value at which a queen is attacking the fewest queens
+void assignBestQueenRow(std::vector<int>& queenVector, int indexInQuestion)
+{
+    int currentAttackValue = getQueenAttackValue(queenVector, indexInQuestion);
+     
+    //Testing each row number, and assigning whenever the current row number is lower.
+        //Note that because this starts at the low end, any case of two rows having the same attack value will result in the lower row number
+        //being the final state, as required in the HW description.
+    for (int i = 1; i < 9; i++) {
+        int tmpValue = getQueenAttackValue(queenVector, indexInQuestion, i); //Getting the attack value that would result from that value change
 
-int findLeastAttackedValue(std::vector<int>& queenVector) {
-    int leastAttackedIndex = 1;
-    int leastAttackedValue = getQueenAttackValue(queenVector, leastAttackedIndex);
-
-    for (int i = 2; i < 9; i++) { //Position 1 was checked to during initialization, it is not rechecked
-        int tmpValue = getQueenAttackValue(queenVector, i);
-
-        if (leastAttackedValue > tmpValue) {
-            leastAttackedIndex = i;
-            leastAttackedValue = tmpValue;
+        //If the new value would reduce this queen's attack value, it is automatically assigned. The idea is the final state will be the lowest value
+        if (tmpValue < currentAttackValue) {
+            currentAttackValue = tmpValue;
+            queenVector.at(indexInQuestion) = i;
         }
     }
 
-    return leastAttackedIndex;
+    return; //The best value (with the least attacks) was assigned during execution
 }
 
 
@@ -88,19 +92,19 @@ int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int 
 
     //This IF allows checking either the queen's current attack value, or probing before a value change
     if (valueAttempt != -1) { 
-        queenIndex = valueAttempt;
+        queenIndex = valueAttempt; //The function has been passed an attempt value to try
     } 
     else {
-        queenIndex = indexInQuestion;
+        queenIndex = indexInQuestion; //The function should look at the index's current value (default behavior)
     }
 
 
     //Now counting the number of attacks that occur
     for (int i = 1; i < 9; i++) {
-        if (queenVector.at(i) == queenVector.at(queenIndex)) {
+        if (queenVector.at(i) == queenVector.at(queenIndex)) { //Same row case
             attacksCount++; //This check has revealed that queen i and the queen at queenIndex are attacking each other by being in the same row.
             continue;
-        }else if(abs(i - queenIndex) == abs(queenVector.at(i) - queenVector.at(queenIndex))){
+        }else if(abs(i - queenIndex) == abs(queenVector.at(i) - queenVector.at(queenIndex))) { //Diagonal Case
             attacksCount++; //This check has revealed that the two queens are diagonal to each other, and are thus attacking each other.
             continue;
         }
