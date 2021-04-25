@@ -41,11 +41,24 @@ int main()
     return 0;
 }
 
-//FindMostAttackedQueen (queenVector)
-    //int currentMostQueen = TODO: assign default values
+int findMostAttackedQueen(std::vector<int>& queenVector) //Finds the index of the most attacked queen
+{
+    //The values
+    int currentMostQueenIndex = 1; //Queen indexes start at 1 to match the assignment sheet
+    int currentMostQueenValue = getQueenAttackValue(queenVector, currentMostQueenIndex);
 
-    //TODO: flesh out process to return most attacked queen value
+    //Checking each queen's attack value
+    for (int i = 2; i < 9; i++) {
+        int tmpValue = getQueenAttackValue(queenVector, i);
 
+        if (currentMostQueenValue < tmpValue) { //If any queen is more attacked than the current "favorite", it becomes the new "favorite"
+            currentMostQueenIndex = i;
+            currentMostQueenValue = tmpValue;
+        }
+    }
+
+    return currentMostQueenIndex;
+}
 
 
 //FindLeastAttackedValue (Takes: queen vector, indexInQuestion)
