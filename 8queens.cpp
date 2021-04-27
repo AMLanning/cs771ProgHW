@@ -52,9 +52,6 @@ int main()
 
         allQueenSets.push_back(singleQueenSet);
     }
-    //For each line:
-        //Get each queen state value, place it in the corresponding data structure
-
 
 //Searching for a Goal State
     //Loop through vector of queen initial states
@@ -67,6 +64,21 @@ int main()
             
             //Check sucess/failure, if looping then neither
                 //Have an if/if-else statement to output success/failure, use double '\n' to make a blank line after each run
+
+//Outputting the results
+    std::ofstream outfile("outfile.txt");
+
+    for (int i = 0; i < numStates; i++) {
+        for (int j = 1; j < (allQueenSets.at(i)).size(); j++) {
+            outfile << (allQueenSets.at(i)).at(j);
+
+            if(j != (allQueenSets.at(i)).size() - 1) { //Spaces in between, newlines after the states is outputted
+                outfile << " ";
+            }else {
+                outfile << "\n";
+            }
+        }
+    }
 
     return 0;
 }
