@@ -10,6 +10,9 @@
 //Remember to put declarations up here
 #include <vector>
 #include <cmath>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 int findMostAttackedQueen(std::vector<int>& queenVector);
 void assignBestQueenRow(std::vector<int>& queenVector, int indexInQuestion);
@@ -17,12 +20,38 @@ int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int 
 
 int main()
 {
-//Set up the data structures
+//Set up the data structures and variables
     std::vector<std::vector<int>> allQueenSets; //This vector will start with all of the initial states as their own vector
+    std::string tmp;
+    int numStates;
 
+//Test code for each function
+    //findMostAttackedQueen Test Code
+    //std::vector<int> tmp = { 0,-1,2,3,4,5,6,7,8 }; //The vector has 9 positions, 0 is unused, to match the homework's index values
+    //allQueenSets.push_back(tmp);//([0,1,2,3,4,5,6,7]);
+    //std::cout << "Most Attacked Queen: " << findMostAttackedQueen(allQueenSets.at(0)) << "\n";
 
 //Loading Initial States from the Input File
-    //Open file
+    std::ifstream inputFile("infile.txt");
+    tmp = inputFile.get();
+    numStates = std::stoi(tmp);//std::stoi(tmp);
+    tmp = inputFile.get(); //Getting rid of the '\n'
+
+
+    for (int i = 0; i < numStates; i++) {
+        std::vector<int> singleQueenSet;
+        singleQueenSet.push_back(-1); //This fills position 1 so that the index values can match the homework sheet
+
+        for (int j = 0; j < 8; j++) {
+            tmp = inputFile.get();
+
+            singleQueenSet.insert(singleQueenSet.begin() + 1 + j, std::stoi(tmp)); //The +1 ensures that the state is stored in positions 1-8
+
+            tmp = inputFile.get(); //Getting rid of the whitespace
+        }
+
+        allQueenSets.push_back(singleQueenSet);
+    }
     //For each line:
         //Get each queen state value, place it in the corresponding data structure
 
@@ -48,9 +77,8 @@ int findMostAttackedQueen(std::vector<int>& queenVector) //Finds the index of th
     int currentMostQueenIndex = 1; //Queen indexes start at 1 to match the assignment sheet
     int currentMostQueenValue = getQueenAttackValue(queenVector, currentMostQueenIndex);
 
-
     //Checking each queen's attack value
-    for (int i = 2; i < 9; i++) { //Position 1 was checked to during initialization, it is not rechecked
+    for (int i = 2; i < 3; i++) { //Position 1 was checked to during initialization, it is not rechecked
         int tmpValue = getQueenAttackValue(queenVector, i);
 
         if (currentMostQueenValue < tmpValue) { //If any queen is more attacked than the current "favorite", it becomes the new "favorite"
