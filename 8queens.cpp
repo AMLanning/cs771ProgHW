@@ -1,5 +1,6 @@
 /* Avery Lanning
- * 
+ * WSU ID: G958W553
+ *
  * CS 771 - Artificial Intelligence
  * Title: 8 Queens Program
  * 
@@ -14,6 +15,7 @@
 #include <fstream>
 #include <string>
 
+int getLargestN1Queens(std::vector<int>& queenSet, std::vector<int>& largestN1QueenIndices);
 int findMostAttackedQueen(std::vector<int>& queenVector);
 void assignBestQueenRow(std::vector<int>& queenVector, int indexInQuestion);
 int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int valueAttempt = -1);
@@ -24,6 +26,7 @@ int main()
     std::vector<std::vector<int>> allQueenSets; //This vector will start with all of the initial states as their own vector
     std::string tmp;
     int numStates;
+    std::vector<bool> resultVec;
 
 //Test code for each function
     //findMostAttackedQueen Test Code
@@ -65,6 +68,40 @@ int main()
             //Check sucess/failure, if looping then neither
                 //Have an if/if-else statement to output success/failure, use double '\n' to make a blank line after each run
 
+    for(int i = 0; i < numStates; i++) {
+        //Get the queenVec containing references to all queens at the current max n1 -- largest number of attacked queens
+        std::vector<int> largestN1Queens;
+        int n1 = getLargestN1Queens(allQueenSets.at(i), largestN1Queens);
+
+        std::cout << "\nresult n1 "<< n1 << "\n";
+
+        //Checking for success
+        if(n1 == 0) {
+            resultVec.push_back(true); //This has been solved
+            break;
+	}
+
+        //Checking for failure
+            //Check each queen with n1 if any have an n2 less than n1 continue, otherwise assign failure
+        for(int j = 0; j < largestN1Queens.size(); j++) {
+            int tmp = largestN1Queens.at(j); //The queen currently under consideration
+
+            //If this particular queen is less than n1 then this is not a failure. It is only a failure when all queens have an attack value over n1
+            if((getQueenAttackValue(allQueenSets.at(i), (allQueenSets.at(i)).at(tmp))) < n1) {
+                break;
+            }else if(j == (largestN1Queens.size() -1)) {
+                resultVec.push_back(false); //This is unsolvable
+            }
+        }
+
+        //After success/failure checks, perform changes
+        assignBestQueenRow(allQueenSets.at(i), largestN1Queens.at(0));
+    }
+
+
+
+
+
 //Outputting the results
     std::ofstream outfile("outfile.txt");
 
@@ -81,6 +118,30 @@ int main()
     }
 
     return 0;
+}
+
+int getLargestN1Queens(std::vector<int>& queenSet, std::vector<int>& largestN1QueenIndices)
+{
+    int largestN1 = getQueenAttackValue(queenSet, 1);
+
+    //Finding the largest n1 value
+    for(int i = 2; i < 9; i++) {
+        int tmp = getQueenAttackValue(queenSet, i);
+        std::cout << tmp << "\n";
+        if(tmp > largestN1) {//If true, a new largest has been found
+            largestN1 = tmp;
+        }
+    }
+
+    //Collecting All Queens with this largest n1 value
+    for(int i = 1; i < 9; i++) {
+        if(getQueenAttackValue(queenSet, i) == largestN1) {
+            largestN1QueenIndices.push_back(i);
+        }
+    }
+
+
+    return largestN1;
 }
 
 int findMostAttackedQueen(std::vector<int>& queenVector) //Finds the index of the most attacked queen
@@ -141,13 +202,14 @@ int getQueenAttackValue(std::vector<int>& queenVector, int indexInQuestion, int 
 
     //Now counting the number of attacks that occur
     for (int i = 1; i < 9; i++) {
-        if (queenVector.at(i) == queenVector.at(queenIndex)) { //Same row case
-            attacksCount++; //This check has revealed that queen i and the queen at queenIndex are attacking each other by being in the same row.
-            continue;
-        }else if(abs(i - queenIndex) == abs(queenVector.at(i) - queenVector.at(queenIndex))) { //Diagonal Case
-            attacksCount++; //This check has revealed that the two queens are diagonal to each other, and are thus attacking each other.
-            continue;
-        }
+
+        //if (queenVector.at(i) == queenVector.at(queenIndex)) { //Same row case
+        //    attacksCount++; //This check has revealed that queen i and the queen at queenIndex are attacking each other by being in the same row.
+        //    continue;
+        //}//else if(abs(i - queenIndex) == abs(queenVector.at(i) - queenVector.at(queenIndex))) { //Diagonal Case
+        //    attacksCount++; //This check has revealed that the two queens are diagonal to each other, and are thus attacking each other.
+        //    continue;
+        //}
     }
 
     return attacksCount;
